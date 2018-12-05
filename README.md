@@ -1,2 +1,1 @@
-# KamikazeHinata.github.io
-Nothing here now ~
+# Nothing here now ~
