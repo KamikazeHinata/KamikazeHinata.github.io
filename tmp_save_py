@@ -1,0 +1,103 @@
+import numpy as np
+
+# plz work in python3 :)
+
+def trans(mat):
+    return np.array(list(zip(*mat)))
+
+
+def check_Xa(M, N, show=False):
+    #  M: dimension of vectors
+    #  N: number of vectors
+
+    if show: print("M:", M, " N:", N)
+
+    X = np.random.rand(M, N)
+    if show: print("X:\n", X)
+    a = np.random.rand(N)
+    if show: print("a:\n", a)
+
+    Xa = X @ a  # or X.dot(a)
+    if show: print("Xa:\n", Xa)
+
+    result = np.zeros(M)
+    for i in range(N):
+        result += a[i] * X[:, i]
+    if show: print("sum of a_i x_i:\n", result)
+
+    diff = np.linalg.norm(Xa - result)
+    if show: print("difference: ", diff)
+
+    return diff
+
+
+def check_XXT(M, N, show=False):
+    if show: print("M:", M, " N:", N)
+
+    X = np.random.rand(M, N)
+    if show: print("X:\n", X)
+    XT = np.array(trans(X))
+    if show: print("XT:\n", XT)
+
+    XXT = X @ XT
+    if show: print("XXT:\n", XXT)
+
+    result = np.zeros([M, M])
+    for i in range(N):
+        result += np.array(X[:, i]).reshape(M, 1) @ np.array(XT[i, :]).reshape(1, M)
+    if show: print("sum of x_i and x_iT:\n", result)
+
+    diff = np.linalg.norm(XXT - result)
+    if show: print("difference: ", diff)
+
+    return diff
+
+
+def check_XTX(M, N, show=False):
+    if show: print("M:", M, " N:", N)
+
+    X = np.random.rand(M*N, 1)
+    if show: print("X:\n", X)
+
+    XT = trans(X)
+    if show: print("XT:\n", XT)
+
+    XTX = XT @ X
+    if show: print("XTX:\n", XTX)
+
+    result = 0
+    for i in range(N):
+        x_iT = XT[0, (i*M):((i+1)*M)]
+        x_i = X[(i*M):((i+1)*M), 0]
+        result += x_iT @ x_i
+    if show: print("the sum of x_iT and x_i is:", result)
+
+    diff = np.linalg.norm(XTX - result)
+    if show: print("difference: ", diff)
+
+    return diff
+
+
+def isOK(val):
+    meps = np.finfo(np.float32).eps  # machine epsilon
+
+    if np.abs(val) < meps:
+        print("OK : {0} < {1}".format(np.abs(val), meps))
+        return True
+    else:
+        print("NG!: {0} > {1}".format(np.abs(val), meps))
+        return False
+
+
+print('first check')
+if not isOK(check_XTX(2, 4, True)): # まずは小さい次元でチェックする．表示して確認するための最初のデバッグ
+    exit()
+
+print('second check')
+if not isOK(check_XTX(118, 21)): # 次に大きめの次元でチェックする．次の段階のデバッグ用．
+    exit()
+
+print('third check')
+for i in range(10): # 任意の次元でランダムに確認する．最終段階．
+    NM = np.random.randint(low=1, high=1000, size=(2, 1))
+    isOK(check_XTX(NM[0, 0], NM[1, 0]))
