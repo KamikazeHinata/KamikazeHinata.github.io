@@ -78,6 +78,32 @@ def check_XTX(M, N, show=False):
     return diff
 
 
+def check_XAXT(M, N, show=False):
+    if show: print("M:", M, " N:", N)
+
+    X = np.random.rand(M, N)
+    if show: print("X:\n", X)
+
+    A = np.diag(np.random.rand(N))
+    if show: print("A:\n", A)
+
+    XT = trans(X)
+    if show: print("XT:\n", XT)
+
+    XAXT = X @ A @ XT
+    if show: print("XAXT:\n", XAXT)
+
+    result = np.zeros([M, M])
+    for i in range(N):
+        result += A[i, i] * (np.array(X[:, 1]).reshape(M, 1) @ np.array(XT[1, :]).reshape(1, M))
+    if show: print("result:\n", result)
+
+    diff = np.linalg.norm(XAXT - result)
+    if show: print("diff:\n", diff)
+
+    return diff
+
+
 def isOK(val):
     meps = np.finfo(np.float32).eps  # machine epsilon
 
@@ -90,14 +116,14 @@ def isOK(val):
 
 
 print('first check')
-if not isOK(check_XTX(2, 4, True)): # まずは小さい次元でチェックする．表示して確認するための最初のデバッグ
+if not isOK(check_XAXT(2, 4, True)): # まずは小さい次元でチェックする．表示して確認するための最初のデバッグ
     exit()
 
 print('second check')
-if not isOK(check_XTX(118, 21)): # 次に大きめの次元でチェックする．次の段階のデバッグ用．
+if not isOK(check_XAXT(118, 21)): # 次に大きめの次元でチェックする．次の段階のデバッグ用．
     exit()
 
 print('third check')
 for i in range(10): # 任意の次元でランダムに確認する．最終段階．
     NM = np.random.randint(low=1, high=1000, size=(2, 1))
-    isOK(check_XTX(NM[0, 0], NM[1, 0]))
+    isOK(check_XAXT(NM[0, 0], NM[1, 0]))
