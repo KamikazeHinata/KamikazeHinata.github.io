@@ -109,8 +109,55 @@ def check_XAXT(M, N, show=False):
     return diff
 
 
-def check_1AXYT1(M, N, show=False):
+def check_XAiYT(M, N, show=False):
     if show: print("M:", M, " N:", N)
+
+    X = np.random.rand(M, N)
+    if show: print("X:\n", X)
+
+    Y = np.random.rand(M, N)
+    if show: print("Y:\n", Y)
+
+    YT = trans(Y)
+    if show: print("YT:\n", YT)
+
+    # A = np.zeros([N, N])
+    # A_ = {}
+    # for i in range(N):
+    #     A_[i] = np.diag(np.random.rand(N))
+    #     if show: print("A_[{0}] is :\n {1}".format(i, A_[i]))
+
+    #     A += A_[i]
+    # if show: print("A:\n", A)
+
+    A = np.random.rand(N, N)
+    if show: print("A;\n", A)
+
+    A_diag = np.zeros([N, N])
+    for i in range(N):
+        for j in range(N):
+            A_diag[i, i] += A[i, j]
+    if show: print("A_diag:\n", A_diag)
+
+    # XAiYT = X @ A @ YT
+    XAiYT = X @ A_diag @ YT
+    if show: print("XAiYT:\n", XAiYT)
+
+    result = np.zeros([M, M])
+    for i in range(N):
+        # a_ij = 0
+        # for j in range(N):
+        #     a_ij += A_[j][i, i]  # sum from a_i1 to a_iN
+        a_ij = A[i, j]
+        x_i = np.array(X[:, i]).reshape(M, 1)
+        yT_i = np.array(YT[i, :]).reshape(1, M)
+        result += a_ij * (x_i @ yT_i)
+    if show: print("result:\n", result)
+
+    diff = np.linalg.norm(XAiYT - result)
+    if show: print("diff: \n", diff)
+
+    return diff
 
 
 def isOK(val):
