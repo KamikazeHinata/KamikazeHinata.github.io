@@ -90,18 +90,27 @@ def check_XAXT(M, N, show=False):
     XT = trans(X)
     if show: print("XT:\n", XT)
 
+    XA = X @ A
+    if show: print("XA:\n", XA)
+
     XAXT = X @ A @ XT
     if show: print("XAXT:\n", XAXT)
 
     result = np.zeros([M, M])
     for i in range(N):
-        result += A[i, i] * (np.array(X[:, 1]).reshape(M, 1) @ np.array(XT[1, :]).reshape(1, M))
+        x1 = np.array(X[:, i]).reshape(M, 1)
+        x1_T = np.array(XT[i, :]).reshape(1, M)
+        result += A[i, i] * x1 @ x1_T
     if show: print("result:\n", result)
 
     diff = np.linalg.norm(XAXT - result)
     if show: print("diff:\n", diff)
 
     return diff
+
+
+def check_1AXYT1(M, N, show=False):
+    if show: print("M:", M, " N:", N)
 
 
 def isOK(val):
